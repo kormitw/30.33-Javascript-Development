@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html>
+    <style>
+        body {
+          font-family: 'Comic Sans MS', cursive;
+          background-color: Pink;
+        }
+    </style>
+<head>
+</head>
+
+<body>
+    <form>
+        <label for="searchbar">Search: </label>
+        <input type="text" id="searchbar" name="searchbar"><br>
+    </form>
+
+    <button id="searchbtn"
+        data-playing="false"
+        class="tape-controls-play"
+        role="switch"
+        aria-checked="false"
+    >
+    Search
+    </button>
+
+    <div id = "dic">
+    </div>
+    
+    <div id = "book">
+    </div>
+
+    <div id ="quote">
+    </div>
+
+    <!--<audio src="sound.mp3" crossorigin="anonymous"></audio>-->
+    <!--<audio controls>
+        <source src="sound.mp3" type="audio/mpeg">
+    </audio>-->
+
+    <script type="module">
+        
+        const audioContext = new AudioContext();
+        const audio = new Audio("./audio/sound.mp3");
+        const source = audioContext.createMediaElementSource(audio);
+        source.connect(audioContext.destination);
+
+        function fetchApiURL(apiUrl){
+            return fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // const container = document.querySelector("#dic");
+                // container.innerText = "";
+                // container.appendChild(generateEntry(data));
+                return data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const container = document.querySelector("#dic");
+                container.innerText = "Word does not exist";
+            });
+        };
+            
+        function fetchBookURL(apiUrl, search){
+            return fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // const container = document.querySelector("#book");
+                // container.innerText = "";
+                // container.appendChild(generateBooks(data, search));
+                return data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const container = document.querySelector("#book");
+                container.innerText = "No books found";
+            });
+        };  
+
+        function fetchBibleURL(apiUrl, search){
+            return fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // const container = document.querySelector("#quote");
+                // container.innerText = "";
+                // container.appendChild(generateQuotes(data, search));
+                return data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const container = document.querySelector("#quote");
+                container.innerText = "No quotes found";
+            });
+        };
+
+        function generateFinal(wordData,bookData,bibleData,search) {
+            // console.log(wordData);
+            // console.log(bookData);
+            // console.log(bibleData);
+            // console.log(search);
+
+            clearEntry();
+
+            let container = document.querySelector("#dic");
+            container.appendChild(generateEntry(wordData));
+
+            container = document.querySelector("#book");
+            container.appendChild(generateBooks(bookData,search));
+
+            container = document.querySelector("#quote");
+            container.appendChild(generateQuotes(bibleData,search));
+        };
+        
+        function generateEntry(data) {
+            while (wordEntry.hasChildNodes()){
+                wordEntry.removeChild(wordEntry.firstChild);
+            };
+
+            for (let word of data){
+                const wordText = document.createElement("h3");
+                wordText.innerText = word.word;
+
+                const phoneticText = document.createElement("p");
+                phoneticText.innerText = word.phonetic;
+
+                wordEntry.appendChild(wordText);
+                wordEntry.appendChild(phoneticText);
+                wordEntry.appendChild(generateMeaning(word.meanings));
+            };
+
+            return wordEntry;
+        };
+
+        function generateMeaning(meanings) {
+            const wordMeaning = document.createElement("p");
+            let i = 0;
+            for (let meaning of meanings) {
+                const div = document.createElement("div");
+                const partOfSpeech = document.createElement("p");
+                partOfSpeech.innerText = meaning.partOfSpeech;
+                div.appendChild(partOfSpeech);
+                div.appendChild(generateDefinition(meaning.definitions));
+
+                const synonymsbtn = document.createElement("button");
+                const antonymsbtn = document.createElement("button");
+
+                synonymsbtn.innerText = "Generate synonyms";
+                antonymsbtn.innerText = "Generate antonyms";
+
+                synonymsbtn.addEventListener("click", () => {
+                    div.appendChild(generateSynonyms(meaning));
+                    synonymsbtn.disabled = true;
+                });
+                antonymsbtn.addEventListener("click", () => {
+                    div.appendChild(generateAntonyms(meaning));
+                    antonymsbtn.disabled = true;
+                });
+
+                div.appendChild(synonymsbtn);
+                div.appendChild(antonymsbtn);
+                wordMeaning.appendChild(div);
+                i++;
+            }
+            return wordMeaning;
+        };
+
+        function generateDefinition(definitionlist) {
+            const wordDefinition = document.createElement("ul");
+            for (let definition of definitionlist){
+                const li = document.createElement("li");
+                li.innerText = definition.definition;
+                wordDefinition.appendChild(li);
+            };
+            return wordDefinition;
+        };
+
+        function generateSynonyms(meaning) {
+            const synonyms = document.createElement("p");
+            if (meaning.synonyms.length > 0) {
+                synonyms.innerText = "Synonyms: " + meaning.synonyms.join(", ");
+            } else {
+                synonyms.innerText = "No synonyms available.";
+            }
+            return synonyms;
+        };
+
+        function generateAntonyms(meaning) {
+            const antonyms = document.createElement("p");
+            if (meaning.antonyms.length > 0) {
+                antonyms.innerText = "Antonyms: " + meaning.antonyms.join(", ");
+            } else {
+                antonyms.innerText = "No antonyms available.";
+            }
+            return antonyms;
+        };
+
+        function generateBooks(books, search) {
+            const header = document.createElement("p");
+            const list = document.createElement("ul");
+            if (books.results.length != 0){
+                header.innerText = "Books containing " + search;
+                for (let result of books.results) {
+                    const li = document.createElement("li");
+                    li.innerText = result.title;
+                    list.appendChild(li);
+                }
+                header.appendChild(list);
+                return header;
+            }
+            else {
+                header.innerText = "There are no books containing " + search;
+                return header;
+            };
+            
+        };
+
+        function generateQuotes(quotes, search) {
+            const header = document.createElement("p");
+            const list = document.createElement("ul");
+            if (quotes.length != 0){
+                header.innerText = "Bible verses containing " + search;
+                let num = 0;
+                for (let quote of quotes) {
+                    if (num < 5) {
+                        const li = document.createElement("li");
+                        li.innerText = quote.text;
+                        list.appendChild(li);
+                        num++;
+                    }
+                    else {
+                        break;
+                    }
+
+                }
+                header.appendChild(list);
+                return header;
+            }
+            else {
+                header.innerText = "There are no bible verses containing " + search;
+                return header;
+            };
+            
+        };
+
+        function createSearch() {
+            const wordsearch = document.getElementById('searchbar').value
+            localStorage.setItem("word",wordsearch);
+
+            audio.play();
+            const intervalId = setInterval(() => {
+                if (audio.currentTime >= 5) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    clearInterval(intervalId);
+                }
+                console.log(audio.currentTime);
+            }, 1000);
+            
+            // console.log("create search working");
+
+            clearEntry();
+            let container = document.querySelector("#dic");
+            container.innerText = "Searching for ";
+            const searchTextNode = document.createTextNode(wordsearch);
+            container.appendChild(searchTextNode);
+            printSearch();
+        };
+
+        function printSearch() {
+            const apiUrl = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
+            const bookUrl = 'https://gutendex.com/books?search=';
+            const bibleUrl = 'https://bolls.life/find/NRSVCE/?search=';
+
+            const search = localStorage.getItem("word");
+            const searchUrl = apiUrl + search;
+            const bookSearch = bookUrl + search; 
+            const bibleSearch = bibleUrl + search + '&match_case=false&match_whole=true';
+            
+            //window.alert(search); debug
+            const dictionaryPromise = fetchApiURL(searchUrl);
+            const bookPromise = fetchBookURL(bookSearch, search);
+            const biblePromise = fetchBibleURL(bibleSearch, search);
+            
+            // console.log("print search working");
+            Promise.all([dictionaryPromise, bookPromise, biblePromise]).then(values => {
+                generateFinal(values[0], values[1], values[2], search)});
+        };
+
+        function clearEntry() {
+            let container = document.querySelector("#dic");
+            container.innerText = "";
+            container = document.querySelector("#book");
+            container.innerText = "";
+            container = document.querySelector("#quote");
+            container.innerText = "";
+        };
+
+        let button = document.querySelector('#searchbtn');
+        button.addEventListener("click", createSearch);
+        const wordEntry = document.createElement("div");
+        printSearch();
+
+    </script>
+</body>
+
+</html>
