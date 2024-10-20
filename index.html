@@ -3,8 +3,20 @@
 <html>
     <style>
         body {
-          font-family: 'Comic Sans MS', cursive;
-          background-color: Pink;
+            font-family: 'Comic Sans MS', cursive;
+            background-color: Pink;
+        }
+
+        #giratina {
+            width: 25%;
+            float: right;
+            position: relative;
+        }
+
+        #volo {
+            width: 25%;
+            float: right;
+            position: relative;
         }
     </style>
 <head>
@@ -20,14 +32,21 @@
     Search
     </button>
 
+    <img id = "giratina" src="/img/giratina.png">
+    <img id = "volo" src="/img/volo.webp">
+
     <div id = "dic">
     </div>
     
     <div id = "book">
     </div>
 
-    <div id ="quote">
+    <div id = "quote">
     </div>
+
+    <div id = "arceus">
+    </div>
+
 
     <!--<audio src="sound.mp3" crossorigin="anonymous"></audio>-->
     <!--<audio controls>
@@ -258,14 +277,14 @@
             localStorage.setItem("word",wordsearch);
 
             audio.play();
-            // const intervalId = setInterval(() => {
-            //     if (audio.currentTime >= 5) {
-            //         audio.pause();
-            //         audio.currentTime = 0;
-            //         clearInterval(intervalId);
-            //     }
-            //     console.log(audio.currentTime);
-            // }, 1000);
+            const intervalId = setInterval(() => {
+                if (audio.currentTime >= 5) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    clearInterval(intervalId);
+                }
+                console.log(audio.currentTime);
+            }, 1000);
             
             // console.log("create search working");
 
@@ -323,7 +342,7 @@
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.setClearColor(0xffc0cb);
-        document.body.appendChild( renderer.domElement );
+        document.getElementById('arceus').appendChild( renderer.domElement );
 
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
@@ -360,6 +379,29 @@
         }
 
         renderer.setAnimationLoop( animate );
+
+        const voloAnim = [
+            {transform: "translateX(100px)"},
+            
+        ];
+
+        const voloTiming = {
+            duration: 2000,
+            iterations: Infinity,
+        };
+
+        const giratinaAnim = [
+            {transform: "scale(0)"},
+            
+        ];
+
+        const giratinaTiming = {
+            duration: 2000,
+            iterations: Infinity,
+        };
+
+        document.getElementById("volo").animate(voloAnim, voloTiming);
+        document.getElementById("giratina").animate(giratinaAnim, giratinaTiming);
     </script>
 </body>
 
