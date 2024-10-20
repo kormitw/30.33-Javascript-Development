@@ -316,32 +316,41 @@
         const wordEntry = document.createElement("div");
         printSearch();
 
-        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js';
-
+        import * as THREE from 'https://cdn.skypack.dev/three@0.129.0/build/three.module.js';
+        import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js';
+        
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize( window.innerWidth, window.innerHeight );
-        renderer.setAnimationLoop( animate );
+        renderer.setClearColor(0xffc0cb);
         document.body.appendChild( renderer.domElement );
 
-        const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-        const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-        const cube = new THREE.Mesh( geometry, material );
-        scene.add( cube );
+        const loader = new GLTFLoader();
+
+        loader.load( './models/arceus.glb', function ( gltf ) {
+            const mesh = gltf.scene;
+            mesh.position.set(0, 0, -3);
+            mesh.scale.set(0.25,0.25,0.25);
+            scene.add(mesh);
+
+        }, undefined, function ( error ) {
+
+            console.error( error );
+
+        } );
 
         camera.position.z = 5;
+        const spotLight = new THREE.SpotLight(0xffffff, 3, 100, 0.2, 0.5);
+        spotLight.position.set(0, 25, 10);
+        scene.add( spotLight );
 
         function animate() {
-
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-
             renderer.render( scene, camera );
-
         }
 
+        renderer.setAnimationLoop( animate );
     </script>
 </body>
 
