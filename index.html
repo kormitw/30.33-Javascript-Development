@@ -16,12 +16,7 @@
         <input type="text" id="searchbar" name="searchbar"><br>
     </form>
 
-    <button id="searchbtn"
-        data-playing="false"
-        class="tape-controls-play"
-        role="switch"
-        aria-checked="false"
-    >
+    <button id="searchbtn">
     Search
     </button>
 
@@ -263,14 +258,14 @@
             localStorage.setItem("word",wordsearch);
 
             audio.play();
-            const intervalId = setInterval(() => {
-                if (audio.currentTime >= 5) {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    clearInterval(intervalId);
-                }
-                console.log(audio.currentTime);
-            }, 1000);
+            // const intervalId = setInterval(() => {
+            //     if (audio.currentTime >= 5) {
+            //         audio.pause();
+            //         audio.currentTime = 0;
+            //         clearInterval(intervalId);
+            //     }
+            //     console.log(audio.currentTime);
+            // }, 1000);
             
             // console.log("create search working");
 
@@ -318,21 +313,35 @@
 
         import * as THREE from 'https://cdn.skypack.dev/three@0.129.0/build/three.module.js';
         import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js';
+        import { OrbitControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js';
+
         
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        camera.position.set(0, 1, 6);
 
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.setClearColor(0xffc0cb);
         document.body.appendChild( renderer.domElement );
 
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.enablePan = false;
+        controls.enableZoom = false;
+        controls.minPolarAngle = 0.5;
+        controls.maxPolarAngle = 1.5;
+        controls.autoRotate = true;
+        controls.update();
+
         const loader = new GLTFLoader();
 
         loader.load( './models/arceus.glb', function ( gltf ) {
             const mesh = gltf.scene;
-            mesh.position.set(0, 0, -3);
-            mesh.scale.set(0.25,0.25,0.25);
+            mesh.position.set(0, -1, 0);
+            mesh.scale.set(.25,.25,.25);
+            mesh.rotation.x += 0.01;
+            mesh.rotation.y += 0.01;
             scene.add(mesh);
 
         }, undefined, function ( error ) {
@@ -341,13 +350,13 @@
 
         } );
 
-        camera.position.z = 5;
-        const spotLight = new THREE.SpotLight(0xffffff, 3, 100, 0.2, 0.5);
-        spotLight.position.set(0, 25, 10);
-        scene.add( spotLight );
+        const spotLight = new THREE.SpotLight(0xffffff, 3, 50, 0.2, 0.5);
+        spotLight.position.set(0, -10, 10);
+        scene.add(spotLight);
 
         function animate() {
-            renderer.render( scene, camera );
+            renderer.render(scene, camera);
+            controls.update();
         }
 
         renderer.setAnimationLoop( animate );
