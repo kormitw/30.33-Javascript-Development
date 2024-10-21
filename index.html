@@ -7,16 +7,19 @@
             background-color: Pink;
         }
 
-        #giratina {
-            width: 25%;
-            float: right;
-            position: relative;
+        #arceus-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 35%;
+            bottom: 20%;
         }
 
-        #volo {
-            width: 25%;
-            float: right;
-            position: relative;
+        #arceus-text {
+            text-align: center;
+            position: absolute;
+            top: 20%;
+            left: 46%
         }
     </style>
 <head>
@@ -32,9 +35,6 @@
     Search
     </button>
 
-    <img id = "giratina" src="/img/giratina.png">
-    <img id = "volo" src="/img/volo.webp">
-
     <div id = "dic">
     </div>
     
@@ -44,14 +44,10 @@
     <div id = "quote">
     </div>
 
-    <div id = "arceus">
+    <div id="arceus-container">
+        <div id="arceus-text"></div>
+        <div id="arceus"></div>
     </div>
-
-
-    <!--<audio src="sound.mp3" crossorigin="anonymous"></audio>-->
-    <!--<audio controls>
-        <source src="sound.mp3" type="audio/mpeg">
-    </audio>-->
 
     <script type="module">
         
@@ -69,9 +65,6 @@
                 return response.json();
             })
             .then(data => {
-                // const container = document.querySelector("#dic");
-                // container.innerText = "";
-                // container.appendChild(generateEntry(data));
                 return data;
             })
             .catch(error => {
@@ -90,9 +83,6 @@
                 return response.json();
             })
             .then(data => {
-                // const container = document.querySelector("#book");
-                // container.innerText = "";
-                // container.appendChild(generateBooks(data, search));
                 return data;
             })
             .catch(error => {
@@ -111,9 +101,6 @@
                 return response.json();
             })
             .then(data => {
-                // const container = document.querySelector("#quote");
-                // container.innerText = "";
-                // container.appendChild(generateQuotes(data, search));
                 return data;
             })
             .catch(error => {
@@ -124,11 +111,6 @@
         };
 
         function generateFinal(wordData,bookData,bibleData,search) {
-            // console.log(wordData);
-            // console.log(bookData);
-            // console.log(bibleData);
-            // console.log(search);
-
             clearEntry();
 
             let container = document.querySelector("#dic");
@@ -306,7 +288,6 @@
             const bookSearch = bookUrl + search; 
             const bibleSearch = bibleUrl + search + '&match_case=false&match_whole=true';
             
-            //window.alert(search); debug
             const dictionaryPromise = fetchApiURL(searchUrl);
             const bookPromise = fetchBookURL(bookSearch, search);
             const biblePromise = fetchBibleURL(bibleSearch, search);
@@ -344,6 +325,10 @@
         renderer.setClearColor(0xffc0cb);
         document.getElementById('arceus').appendChild( renderer.domElement );
 
+        const h1 = document.createElement("h1");
+        h1.innerText = "Hello my child";
+        document.getElementById('arceus-text').appendChild( h1 );
+
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.enablePan = false;
@@ -380,28 +365,18 @@
 
         renderer.setAnimationLoop( animate );
 
-        const voloAnim = [
-            {transform: "translateX(100px)"},
-            
+        const arceusAnim = [
+            {color: "white"},
+            {color: "black"},
+            {color: "white"},
         ];
 
-        const voloTiming = {
-            duration: 2000,
+        const arceusTiming = {
+            duration: 10000,
             iterations: Infinity,
         };
 
-        const giratinaAnim = [
-            {transform: "scale(0)"},
-            
-        ];
-
-        const giratinaTiming = {
-            duration: 2000,
-            iterations: Infinity,
-        };
-
-        document.getElementById("volo").animate(voloAnim, voloTiming);
-        document.getElementById("giratina").animate(giratinaAnim, giratinaTiming);
+        document.getElementById("arceus-text").animate(arceusAnim, arceusTiming);
     </script>
 </body>
 
