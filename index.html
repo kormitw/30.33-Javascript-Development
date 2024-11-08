@@ -303,9 +303,25 @@
         const wordEntry = document.createElement("div");
         printSearch();
 
-        import {scene, camera, renderer, h1model, controls, loader, spotLight, animate} from "./modules/3dmodel.js";
+        import {threedmodelElement} from "./modules/3dmodel.js";
 
-        import {arceusAnim, arceusTiming} from "./modules/animations.js";
+        const arceusModel = new threedmodelElement("arceus", './models/arceus.glb', "arceus-text", "Hello my Child");
+
+        import {animationElement} from "./modules/animations.js";
+
+        const arceusAnimData = [
+            {color: "white"},
+            {color: "black"},
+            {color: "white"},
+        ];
+
+        const arceusTiming = {
+            duration: 10000,
+            iterations: Infinity,
+        };
+
+        const arceusAnimation = new animationElement("arceus-text", arceusAnimData, arceusTiming)
+        arceusAnimation.startAnimation();
 
     </script>
 </body>

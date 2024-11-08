@@ -2,52 +2,66 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.129.0/build/three.module
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js';
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.position.set(0, 1, 6);
+export class threedmodelElement {
+    constructor(divId, modelPath, textId, textElement){
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        this.camera.position.set(0, 1, 6);
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.setClearColor(0xffc0cb);
-document.getElementById('arceus').appendChild( renderer.domElement );
+        this.renderer = new THREE.WebGLRenderer();
+        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.renderer.setClearColor(0xffc0cb);
+        document.getElementById(divId).appendChild(this.renderer.domElement);
 
-const h1model = document.createElement("h1");
-h1model.innerText = "Hello my child";
-document.getElementById('arceus-text').appendChild( h1model );
+        this.h1model = document.createElement("h1");
+        this.h1model.innerText = textElement;
+        document.getElementById(textId).appendChild( this.h1model );
 
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.enablePan = false;
-controls.enableZoom = false;
-controls.minPolarAngle = 0.5;
-controls.maxPolarAngle = 1.5;
-controls.autoRotate = true;
-controls.update();
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.enableDamping = true;
+        this.controls.enablePan = false;
+        this.controls.enableZoom = false;
+        this.controls.minPolarAngle = 0.5;
+        this.controls.maxPolarAngle = 1.5;
+        this.controls.autoRotate = true;
+        this.controls.update();
 
-const loader = new GLTFLoader();
-loader.load( './models/arceus.glb', function ( gltf ) {
-    const mesh = gltf.scene;
-    mesh.position.set(0, -1, 0);
-    mesh.scale.set(.25,.25,.25);
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.01;
-    scene.add(mesh);
+        this.loadModel(modelPath);
 
-}, undefined, function ( error ) {
+        this.setUpLighting();
 
-    console.error( error );
+        this.startAnimation();
+    }
 
-} );
+    loadModel(modelPath){
+        const loader = new GLTFLoader();
+        loader.load( modelPath, (gltf) => {
+            const mesh = gltf.scene;
+            mesh.position.set(0, -1, 0);
+            mesh.scale.set(.25,.25,.25);
+            mesh.rotation.x += 0.01;
+            mesh.rotation.y += 0.01;
+            this.scene.add(mesh);
 
-const spotLight = new THREE.SpotLight(0xffffff, 3, 50, 0.2, 0.5);
-spotLight.position.set(0, -10, 10);
-scene.add(spotLight);
+        }, undefined, function ( error ) {
 
-function animate() {
-    renderer.render(scene, camera);
-    controls.update();
+            console.error( error );
+
+        } );
+    }
+
+    setUpLighting(){
+        const spotLight = new THREE.SpotLight(0xffffff, 3, 50, 0.2, 0.5);
+        spotLight.position.set(0, -10, 10);
+        this.scene.add(spotLight);
+    }
+
+    startAnimation() {
+        const animate = () => {
+            this.renderer.render(this.scene, this.camera);
+            this.controls.update();
+        };
+
+        this.renderer.setAnimationLoop(animate);
+    }
 }
-
-renderer.setAnimationLoop( animate );
-
-export {scene, camera, renderer, h1model, controls, loader, spotLight, animate};

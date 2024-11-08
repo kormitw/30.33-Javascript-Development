@@ -1,14 +1,11 @@
-const arceusAnim = [
-    {color: "white"},
-    {color: "black"},
-    {color: "white"},
-];
+export class animationElement {
+    constructor(elementId, animationData = [], animationTiming = {}){
+        this.element = document.getElementById(elementId);
+        this.animationData = animationData;
+        this.animationTiming = animationTiming;
+    }
 
-const arceusTiming = {
-    duration: 10000,
-    iterations: Infinity,
-};
-
-document.getElementById("arceus-text").animate(arceusAnim, arceusTiming);
-
-export {arceusAnim, arceusTiming};
+    startAnimation() {
+        this.animation = this.element.animate(this.animationData, this.animationTiming)
+    }
+}
