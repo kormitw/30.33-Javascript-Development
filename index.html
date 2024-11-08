@@ -48,11 +48,11 @@
     </div>
 
     <script type="module">
-        
-        const audioContext = new AudioContext();
-        const audio = new Audio("./audio/sound.mp3");
-        const source = audioContext.createMediaElementSource(audio);
-        source.connect(audioContext.destination);
+        import {audioContext, audio, source} from "./modules/music.js";
+        // const audioContext = new AudioContext();
+        // const audio = new Audio("./audio/sound.mp3");
+        // const source = audioContext.createMediaElementSource(audio);
+        // source.connect(audioContext.destination);
 
         function fetchApiURL(apiUrl){
             return fetch(apiUrl)
