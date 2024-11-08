@@ -48,7 +48,8 @@
     </div>
 
     <script type="module">
-        import {audioContext, audio, source} from "./modules/music.js";
+        import {soundEffect} from "./modules/music.js";
+        const searchAudio = new soundEffect("./audio/sound.mp3");
 
         function fetchApiURL(apiUrl){
             return fetch(apiUrl)
@@ -252,14 +253,14 @@
             const wordsearch = document.getElementById('searchbar').value
             localStorage.setItem("word",wordsearch);
 
-            audio.play();
+            searchAudio.play();
+            console.log(searchAudio.getTimestamp());
             const intervalId = setInterval(() => {
-                if (audio.currentTime >= 5) {
-                    audio.pause();
-                    audio.currentTime = 0;
+                if (searchAudio.getTimestamp() >= 5) {
+                    searchAudio.stop()
                     clearInterval(intervalId);
                 }
-                console.log(audio.currentTime);
+                console.log(searchAudio.getTimestamp());
             }, 1000);
 
             clearEntry();
@@ -304,20 +305,8 @@
 
         import {scene, camera, renderer, h1model, controls, loader, spotLight, animate} from "./modules/3dmodel.js";
 
-        renderer.setAnimationLoop( animate );
+        import {arceusAnim, arceusTiming} from "./modules/animations.js";
 
-        const arceusAnim = [
-            {color: "white"},
-            {color: "black"},
-            {color: "white"},
-        ];
-
-        const arceusTiming = {
-            duration: 10000,
-            iterations: Infinity,
-        };
-
-        document.getElementById("arceus-text").animate(arceusAnim, arceusTiming);
     </script>
 </body>
 

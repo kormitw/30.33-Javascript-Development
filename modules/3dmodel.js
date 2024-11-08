@@ -48,4 +48,6 @@ function animate() {
     controls.update();
 }
 
+renderer.setAnimationLoop( animate );
+
 export {scene, camera, renderer, h1model, controls, loader, spotLight, animate};
