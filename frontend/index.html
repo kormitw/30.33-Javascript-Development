@@ -50,63 +50,38 @@
     <script type="module">
         import {soundEffect} from "./modules/music.js";
         const searchAudio = new soundEffect("./audio/sound.mp3");
-
-        function fetchApiURL(apiUrl){
-            return fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                return data;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                const container = document.querySelector("#dic");
-                container.innerText = "Word does not exist";
-            });
-        };
             
-        function fetchBookURL(apiUrl, search){
-            return fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                return data;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                const container = document.querySelector("#book");
-                container.innerText = "No books found";
-            });
-        };  
+        function fetchDictionary(search){
+            return fetch(`/dictionary?search=${search}`)
+                .then((res) => res.json())
+                .then((res) => {
+                    return res;
+                });
+        };
 
-        function fetchBibleURL(apiUrl, search){
-            return fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                return data;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                const container = document.querySelector("#quote");
-                container.innerText = "No quotes found";
-            });
+        function fetchBook(search){
+            return fetch(`/books?search=${search}`)
+                .then((res) => res.json())
+                .then((res) => {
+                    return res;
+                });
+        };
+
+        function fetchQuote(search){
+            return fetch(`/quotes?search=${search}`)
+                .then((res) => res.json())
+                .then((res) => {
+                    return res;
+                });
         };
 
         function generateFinal(wordData,bookData,bibleData,search) {
             clearEntry();
+
+            // console.log(wordData);
+            // console.log(bookData);
+            // console.log(bibleData);
+            // console.log(search);
 
             let container = document.querySelector("#dic");
             container.appendChild(generateEntry(wordData));
@@ -119,6 +94,7 @@
         };
         
         function generateEntry(data) {
+            console.log(data);
             while (wordEntry.hasChildNodes()){
                 wordEntry.removeChild(wordEntry.firstChild);
             };
@@ -272,21 +248,15 @@
         };
 
         function printSearch() {
-            const apiUrl = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
-            const bookUrl = 'https://gutendex.com/books?search=';
-            const bibleUrl = 'https://bolls.life/find/NRSVCE/?search=';
 
             const search = localStorage.getItem("word");
-            const searchUrl = apiUrl + search;
-            const bookSearch = bookUrl + search; 
-            const bibleSearch = bibleUrl + search + '&match_case=false&match_whole=true';
             
-            const dictionaryPromise = fetchApiURL(searchUrl);
-            const bookPromise = fetchBookURL(bookSearch, search);
-            const biblePromise = fetchBibleURL(bibleSearch, search);
+            const dictionaryPromise = fetchDictionary(search);
+            const bookPromise = fetchBook(search);
+            const biblePromise = fetchQuote(search);
             
             Promise.all([dictionaryPromise, bookPromise, biblePromise]).then(values => {
-                generateFinal(values[0], values[1], values[2], search)});
+            generateFinal(values[0], values[1], values[2], search)});
         };
 
         function clearEntry() {
